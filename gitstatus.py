@@ -9,6 +9,7 @@ from subprocess import Popen, PIPE
 gitbinary='/home/lnara002/software/git/git/postinstall/bin/git'
 
 import sys
+import os
 gitsym = Popen([gitbinary, 'symbolic-ref', 'HEAD'], stdout=PIPE, stderr=PIPE)
 branch, error = gitsym.communicate()
 
@@ -54,6 +55,47 @@ else:
 		ahead = len([x for x in behead if x[0]=='>'])
 		behind = len(behead) - ahead
 
+def get_value_from_file(filename):
+	try:
+		with open(filename,'r') as f:
+			value=f.read().strip()
+	except:
+		value=0
+	return value
+
+merge_activity=""
+step=0
+total=0
+gitdir = Popen([gitbinary,'rev-parse','--git-dir'], stdout=PIPE).communicate()[0].decode("utf-8")[:-1]
+if os.path.isdir(gitdir+'/rebase-merge'):
+	step = get_value_from_file(gitdir+'/rebase-merge/msgnum')
+	total = get_value_from_file(gitdir+'/rebase-merge/end')
+	if os.path.exists(gitdir+'/rebase-merge/interactive'):
+		merge_activity="|REBASE-i"
+	else:
+		merge_activity="|REBASE-m"
+else:
+	if os.path.isdir(gitdir+'/rebase-apply'):
+		step = get_value_from_file(gitdir+'/rebase-apply/next')
+		total = get_value_from_file(gitdir+'/rebase-apply/last')
+		if os.path.exists(gitdir+'/rebase-apply/rebasing'):
+			merge_activity="|REBASE"
+		elif os.path.exists(gitdir+'/rebase-apply/applying'):
+			merge_activity="|AM"
+		else:
+			merge_activity="|AM/REBASE"
+	elif os.path.exists(gitdir+'/MERGE_HEAD'):
+		merge_activity="|MERGING"
+	elif os.path.exists(gitdir+'/CHERRY_PICK_HEAD'):
+		merge_activity="|CHERRY-PICKING"
+	elif os.path.exists(gitdir+'/REVERT_HEAD'):
+		merge_activity="|REVERTING"
+	elif os.path.exists(gitdir+'/BISECT_LOG'):
+		merge_activity="|BISECTING"
+
+if step != 0 and total != 0:
+	merge_activity="%s-(%d/%d)"%(merge_activity,step,total)
+
 out = ' '.join([
 	branch,
 	str(ahead),
@@ -62,6 +104,7 @@ out = ' '.join([
 	conflicts,
 	changed,
 	untracked,
+	merge_activity,
 	])
 print(out, end='')
 

@@ -58,6 +58,7 @@ function update_current_git_vars() {
 	GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
 	GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
 	GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
+	GIT_EXTRAOUTPUT=$__CURRENT_GIT_STATUS[8]
 }
 
 
@@ -86,6 +87,9 @@ git_super_status() {
 	  fi
 	  if [ "$GIT_CHANGED" -eq "0" ] && [ "$GIT_CONFLICTS" -eq "0" ] && [ "$GIT_STAGED" -eq "0" ] && [ "$GIT_UNTRACKED" -eq "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CLEAN"
+	  fi
+	  if [ -n "$GIT_EXTRAOUTPUT" ]; then
+		  STATUS="$STATUS$GIT_EXTRAOUTPUT"
 	  fi
 	  STATUS="$STATUS%{${reset_color}%}$ZSH_THEME_GIT_PROMPT_SUFFIX"
 	  echo "$STATUS"
