@@ -94,7 +94,7 @@ else:
 		merge_activity="|BISECTING"
 
 if step != 0 and total != 0:
-	merge_activity="%s-(%d/%d)"%(merge_activity,step,total)
+	merge_activity="%s-(%s/%s)"%(merge_activity,step,total)
 
 out = ' '.join([
 	branch,
