@@ -6,7 +6,7 @@ prehash = ':'
 
 from subprocess import Popen, PIPE
 
-gitbinary='/home/lnara002/software/git/git/postinstall/bin/git'
+gitbinary='git'
 
 import sys
 import os
