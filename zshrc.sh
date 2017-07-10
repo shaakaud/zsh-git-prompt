@@ -58,7 +58,8 @@ function update_current_git_vars() {
 	GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
 	GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
 	GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
-	GIT_EXTRAOUTPUT=$__CURRENT_GIT_STATUS[8]
+	GIT_STASH=$__CURRENT_GIT_STATUS[8]
+	GIT_EXTRAOUTPUT=$__CURRENT_GIT_STATUS[9]
 }
 
 
@@ -85,7 +86,10 @@ git_super_status() {
 	  if [ "$GIT_UNTRACKED" -ne "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED$GIT_UNTRACKED"
 	  fi
-	  if [ "$GIT_CHANGED" -eq "0" ] && [ "$GIT_CONFLICTS" -eq "0" ] && [ "$GIT_STAGED" -eq "0" ] && [ "$GIT_UNTRACKED" -eq "0" ]; then
+	  if [ "$GIT_STASH" -ne "0" ]; then
+		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_STASH$GIT_STASH"
+	  fi
+	  if [ "$GIT_CHANGED" -eq "0" ] && [ "$GIT_CONFLICTS" -eq "0" ] && [ "$GIT_STAGED" -eq "0" ] && [ "$GIT_UNTRACKED" -eq "0" ] && [ "$GIT_STASH" -eq "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CLEAN"
 	  fi
 	  if [ -n "$GIT_EXTRAOUTPUT" ]; then
@@ -107,6 +111,7 @@ ZSH_THEME_GIT_PROMPT_CHANGED="%{✚%G%}"
 ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
 ZSH_THEME_GIT_PROMPT_AHEAD="%{↑%G%}"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{…%G%}"
+ZSH_THEME_GIT_PROMPT_STASH="%{⚑%G%}"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 
 

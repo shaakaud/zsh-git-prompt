@@ -35,6 +35,20 @@ changed = str(nb_changed)
 nb_untracked = len([0 for status in Popen([gitbinary,'status','--porcelain',],stdout=PIPE).communicate()[0].decode("utf-8").splitlines() if status.startswith('??')])
 untracked = str(nb_untracked)
 
+def get_stash():
+    cmd = Popen([gitbinary, 'rev-parse', '--git-dir'], stdout=PIPE, stderr=PIPE)
+    so, se = cmd.communicate()
+    stash_file = '%s%s' % (so.decode('utf-8').rstrip(), '/logs/refs/stash')
+
+    try:
+        with open(stash_file) as f:
+            return sum(1 for _ in f)
+    except IOError:
+        return 0
+
+nb_stash = get_stash()
+stash=str(nb_stash)
+
 ahead, behind = 0,0
 
 if not branch: # not on any branch
@@ -104,6 +118,7 @@ out = ' '.join([
 	conflicts,
 	changed,
 	untracked,
+	stash,
 	merge_activity,
 	])
 print(out, end='')
